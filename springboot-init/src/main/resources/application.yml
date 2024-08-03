@@ -1,0 +1,77 @@
+server:
+  port: 10017
+  servlet:
+    context-path: /example
+
+spring:
+#  profiles:
+#    active: dev
+
+  application:
+    name: sprintboot-init
+
+  cache:
+    type: redis
+
+  # mysql
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/databese-name?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=GMT%2B8
+    username: your_username
+    password: your_password
+    tomcat:
+      initial-size: 10    # 初始化连接数
+      max-active: 100     # 最大活跃数
+      min-idle: 20        # 最小空闲数
+      max-wait: 60000     # 最长等待时间
+
+  # redis
+  redis:
+    host: 192.168.1.10
+    port: 6379
+    password: your_password
+    database: 1
+    timeout: 5s
+    jedis:
+      pool:
+        min-idle: 10
+        max-idle: 100
+        max-active: 100
+        max-wait: -1ms
+
+  # jackson
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+# mybatis
+mybatis:
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  type-aliases-package: com.cn.example.entity
+  configuration:
+    map-underscore-to-camel-case: true  # 下划线转驼峰
+    cache-enabled: true                 # 开启缓存
+
+  # mybatis-plus
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  type-aliases-package: com.cn.example.entity
+  configuration:
+    map-underscore-to-camel-case: true  # 下划线转驼峰
+    cache-enabled: true                 # 开启缓存
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印SQL日志
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: assign_uuid
+
+# jwt
+jwt:
+  tokenHeader: "Authorization"
+  prefix: "Bearer "
+  iss: "user"
+  secret: "secretKey"
+  validty: 1h
+  cachePrefix: "Bearer "

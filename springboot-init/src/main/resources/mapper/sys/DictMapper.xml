@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.example.mapper.sys.DictMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.cn.example.entity.sys.Dict">
+        <result column="id" property="id" />
+        <result column="label" property="label" />
+        <result column="value" property="value" />
+        <result column="dict_type" property="dictType" />
+        <result column="description" property="description" />
+        <result column="sort" property="sort" />
+        <result column="create_date" property="createDate" />
+        <result column="create_by" property="createBy" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_by" property="updateBy" />
+        <result column="del_flag" property="delFlag" />
+        <result column="remarks" property="remarks" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="BaseColumns">
+        a.id,
+        a.label,
+        a.value,
+        a.dict_type,
+        a.description,
+        a.sort,
+        a.create_date,
+        a.create_by,
+        a.update_date,
+        a.update_by,
+        a.del_flag,
+        a.remark
+    </sql>
+
+    <update id="deleteDict">
+        UPDATE sys_dict SET del_flag = "1", update_date = NOW()
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="listPage" resultMap="BaseResultMap">
+        SELECT
+            <include refid="BaseColumns" />
+        FROM sys_dict a
+        <where>
+            <if test="dict != null">
+                <if test="dict.label != null and dict.label != ''">
+                    AND a.label = #{dict.label}
+                </if>
+                <if test="dict.value != null and dict.value != ''">
+                    AND a.value = #{dict.value}
+                </if>
+                <if test="dict.dictType != null and dict.dictType != ''">
+                    AND a.dict_type = #{dict.dictType}
+                </if>
+            </if>
+            AND a.del_flag = "0"
+        </where>
+        ORDER BY a.create_date DESC
+    </select>
+</mapper>

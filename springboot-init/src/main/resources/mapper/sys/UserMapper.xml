@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.example.mapper.sys.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.cn.example.entity.sys.User">
+        <result column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="email" property="email" />
+        <result column="avatar_url" property="avatarUrl" />
+        <result column="gender" property="gender" />
+        <result column="wechat_openid" property="wechatOpenid" />
+        <result column="last_login_time" property="lastLoginTime" />
+        <result column="create_date" property="createDate" />
+        <result column="create_by" property="createBy" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_by" property="updateBy" />
+        <result column="del_flag" property="delFlag" />
+        <result column="remarks" property="remarks" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="BaseColumns">
+        a.id,
+        a.username,
+        a.password,
+        a.nickname,
+        a.email,
+        a.avatar_url,
+        a.gender,
+        a.wechat_openid,
+        a.last_login_time,
+        a.create_date,
+        a.create_by,
+        a.update_date,
+        a.update_by,
+        a.del_flag,
+        a.remarks
+    </sql>
+
+    <update id="updatePassword">
+        UPDATE sys_user SET password = #{password} WHERE id = #{userId} AND del_flag = "0"
+    </update>
+
+    <update id="deleteUser">
+        UPDATE sys_user SET del_flag = "1", update_date = NOW() WHERE id = #{userId}
+    </update>
+
+    <select id="getUserOfUsername" resultMap="BaseResultMap">
+        SELECT
+            <include refid="BaseColumns" />
+        FROM sys_user a
+        WHERE a.username = #{username}
+        AND   a.del_flag = "0"
+    </select>
+
+    <select id="listPage" resultMap="BaseResultMap">
+        SELECT
+            <include refid="BaseColumns" />
+        FROM
+            sys_user a
+        <where>
+            <if test="user != null">
+                <if test="user.username != null and user.username != ''">
+                    AND a.username = #{user.username}
+                </if>
+                <if test="user.nickname != null and user.nickname != ''">
+                    AND a.nickname = #{user.nickname}
+                </if>
+                <if test="user.email != null and user.email != ''">
+                    AND a.email = #{user.email}
+                </if>
+                <if test="user.gender != null and user.gender != ''">
+                    AND a.gender = #{user.gender}
+                </if>
+            </if>
+            AND a.del_flag = "0"
+        </where>
+        ORDER BY a.create_date DESC
+    </select>
+</mapper>

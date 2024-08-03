@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.example.mapper.sys.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.cn.example.entity.sys.Role">
+        <result column="id" property="id" />
+        <result column="role_name" property="roleName" />
+        <result column="code" property="code" />
+        <result column="role_type" property="roleType" />
+        <result column="sort" property="sort" />
+        <result column="description" property="description" />
+        <result column="create_date" property="createDate" />
+        <result column="create_by" property="createBy" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_by" property="updateBy" />
+        <result column="del_flag" property="delFlag" />
+        <result column="remarks" property="remarks" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="BaseColumns">
+        a.id,
+        a.role_name,
+        a.code,
+        a.role_type,
+        a.sort,
+        a.description,
+        a.create_date,
+        a.create_by,
+        a.update_date,
+        a.update_by,
+        a.del_flag,
+        a.remarks
+    </sql>
+
+    <update id="deleteRole">
+        UPDATE sys_role SET del_flag = "1", update_date = NOW() WHERE id = #{roleId}
+    </update>
+
+    <insert id="grantRole4User">
+        INSERT INTO sys_user_role(user_id, role_id)
+        VALUES
+            <foreach collection="userList" item="userId" separator=",">
+                (#{userId}, #{role_id})
+            </foreach>
+    </insert>
+
+    <select id="listPage" resultMap="BaseResultMap">
+        SELECT
+            <trim>
+                <include refid="BaseColumns" />
+            </trim>
+        FROM sys_role a
+        <where>
+            <if test="role != null">
+                <if test="role.roleName != null || role.roleName != ''">
+                    AND a.role_name = #{role.roleName}
+                </if>
+                <if test="role.code != null || role.code != ''">
+                    AND a.code = #{role.code}
+                </if>
+                <if test="role.roleType != null || role.roleType != ''">
+                    AND a.role_type = #{role.roleType}
+                </if>
+            </if>
+            AND a.del_flag = "0"
+        </where>
+        ORDER BY a.create_date DESC
+    </select>
+
+    <select id="listRoleOfUser" resultMap="BaseResultMap">
+        SELECT
+            <trim>
+                <include refid="BaseColumns" />
+            </trim>
+        FROM sys_role a
+        LEFT JOIN sys_user_role sur
+        ON a.id = sur.role_Id
+        WHERE a.del_flag = "0"
+        AND sur.user_id = #{userId}
+    </select>
+
+</mapper>
